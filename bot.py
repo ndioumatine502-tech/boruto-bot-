@@ -1,36 +1,28 @@
-
 import os
-import threading
 from flask import Flask
 from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
+from telegram.ext import Application, CommandHandler, ContextTypes
 
-app = Flask(__name__)
+TOKEN = os.environ.get("BOT_TOKEN")
+app_flask = Flask(__name__)
 
-@app.route('/')
+@app_flask.route('/')
 def home():
-    return "Boruto Bot is Live!"
-
-def run_flask():
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host='0.0.0.0', port=port)
+    return "Bot is running!"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Yo ! Je suis Boruto Bot")
-
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = update.message.text
-    await update.message.reply_text(f"Tu as dit: {text}")
+    await update.message.reply_text("Salut ! Boruto Bot est en ligne 🔥")
 
 def main():
-    threading.Thread(target=run_flask, daemon=True).start()
-    token = os.environ.get("BOT_TOKEN")
-    if not token:
+    if not TOKEN:
+        print("ERREUR: BOT_TOKEN non trouvé!")
         return
-    app_bot = ApplicationBuilder().token(token).build()
-    app_bot.add_handler(CommandHandler("start", start))
-    app_bot.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    app_bot.run_polling()
+    application = Application.builder().token(TOKEN).build()
+    application.add_handler(CommandHandler("start", start))
+    application.run_polling()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
+    # Pour Render - lance Flask en arrière plan
+    from threading import Thread
+    Thread(target=lambda: app_flask.run(host='0.0.0.0', port=10000)).start()
     main()
