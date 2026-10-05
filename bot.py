@@ -12,16 +12,13 @@ def home():
     return "Bot is Live!"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Salut ! Je suis en ligne 🔥 Ton Boruto Bot marche !")
+    await update.message.reply_text("Salut ! Je suis en ligne 🔥")
 
 def run_flask():
-    flask_app.run(host='0.0.0.0', port=10000)
+    port = int(os.environ.get("PORT", 10000))
+    flask_app.run(host='0.0.0.0', port=port)
 
 def main():
-    if not TOKEN:
-        print("ERREUR: BOT_TOKEN manquant")
-        return
-    print("Demarrage du bot Telegram...")
     app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.run_polling()
