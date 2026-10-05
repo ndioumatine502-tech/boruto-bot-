@@ -5,7 +5,6 @@ from telegram.ext import Application, CommandHandler, ContextTypes
 import threading
 
 TOKEN = os.environ.get("BOT_TOKEN")
-
 flask_app = Flask(__name__)
 
 @flask_app.route('/')
